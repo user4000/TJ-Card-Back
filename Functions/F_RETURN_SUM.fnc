@@ -1,0 +1,21 @@
+
+CREATE OR REPLACE FUNCTION F_RETURN_SUM(I_ID_RETURN IN INTEGER)
+RETURN INTEGER /* Функция вернёт общую сумму данного объекта "Возврат".*/
+IS
+F INTEGER;   
+BEGIN
+   
+SELECT SUM(N) INTO F FROM
+(
+    SELECT (1+RANGE_MAX-RANGE_MIN)*F_BALANCE as N 
+        FROM CARD_BACK.T_RETURN_RANGE
+            WHERE ID_RETURN=I_ID_RETURN
+);
+
+RETURN( NVL(F,0) );
+
+EXCEPTION 
+    WHEN OTHERS THEN 
+           RETURN(0);
+     
+END;

@@ -1,0 +1,23 @@
+CREATE OR REPLACE VIEW V_RETURN_FIRST_HISTORY AS
+/* Показывает дату создания и пользователя создавшего "Возврат" в истории объекта "Возврат" */
+SELECT A.*, H.HISTORY_DATE, H.ID_USER, C.N_REGION FROM T_RETURN A
+INNER JOIN 
+(
+    SELECT E.* FROM T_RETURN_HISTORY E
+    INNER JOIN 
+    (
+            SELECT 
+            ID_RETURN, MIN(ID_HISTORY) as ID_HISTORY_MIN 
+            FROM T_RETURN_HISTORY
+            GROUP BY ID_RETURN
+    ) B
+    ON E.ID_HISTORY=B.ID_HISTORY_MIN
+) H
+
+ON H.ID_RETURN=A.ID_RETURN
+
+INNER JOIN
+        V_USER_REGION C
+ON H.ID_USER = C.USER_ID     
+
+ORDER BY A.ID_RETURN
